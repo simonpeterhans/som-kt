@@ -1,8 +1,60 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm' version '1.4.31'
+    id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
     id 'application'
     id 'java'
     id 'idea'
+}
+
+// Project settings.
+group 'ch.unibas.dmi.dbis'
+version = '0.0.0-SNAPSHOT'
+
+// Main class.
+mainClassName = 'ch.unibas.dmi.dbis.som.MainKt'
+
+java {
+    sourceCompatibility = javaCompatibility
+    targetCompatibility = javaCompatibility
+}
+
+test {
+    useJUnitPlatform()
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = javaCompatibility
+}
+
+compileTestKotlin {
+    kotlinOptions.jvmTarget = javaCompatibility
+}
+
+jar {
+    //noinspection GroovyAssignabilityCheck
+    manifest {
+        attributes 'Version': archiveVersion.get()
+        attributes 'Main-Class': mainClassName // Same as for the application plugin.
+        attributes 'Manifest-Version': '1.0'
+        attributes 'Multi-Release': true
+    }
+
+    // Gradle 7.0 requires a duplicate handling strategy or fails if duplicates occur.
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+
+    from {
+        configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+idea {
+    module {
+        // IntelliJ should download Javadoc.
+        downloadJavadoc = true
+
+        // Exclude directories from IntelliJ (indexing etc.).
+        excludeDirs += file("data")
+    }
 }
 
 repositories {
@@ -10,13 +62,13 @@ repositories {
 }
 
 dependencies {
-    implementation platform('org.jetbrains.kotlin:kotlin-bom')
+    /** LOGGING. */
+    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.14.1'
+    // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging-jvm
+    implementation group: 'io.github.microutils', name: 'kotlin-logging-jvm', version: '2.0.8'
 
-    testImplementation 'org.jetbrains.kotlin:kotlin-test'
-    testImplementation 'org.jetbrains.kotlin:kotlin-test-junit'
+    /** JUNIT. */
+    // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-test
+    testImplementation group: 'org.jetbrains.kotlin', name: 'kotlin-test', version: "$kotlinVersion"
 }
-
-application {
-    mainClass = 'som.kt.MainKt'
-}
-
