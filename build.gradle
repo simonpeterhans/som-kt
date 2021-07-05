@@ -10,7 +10,7 @@ group 'ch.unibas.dmi.dbis'
 version = '0.0.0-SNAPSHOT'
 
 // Main class.
-mainClassName = 'ch.unibas.dmi.dbis.som.MainKt'
+mainClassName = 'ch.unibas.dmi.dbis.MainKt'
 
 java {
     sourceCompatibility = javaCompatibility
@@ -64,9 +64,9 @@ repositories {
 dependencies {
     /** LOGGING. */
     // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: '2.14.1'
+    implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: "$log4jslf4jVersion"
     // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging-jvm
-    implementation group: 'io.github.microutils', name: 'kotlin-logging-jvm', version: '2.0.8'
+    implementation group: 'io.github.microutils', name: 'kotlin-logging-jvm', version: "$kotlinLoggingVersion"
 
     /** JUNIT. */
     // https://mvnrepository.com/artifact/org.jetbrains.kotlin/kotlin-test
