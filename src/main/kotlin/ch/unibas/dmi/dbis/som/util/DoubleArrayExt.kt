@@ -13,14 +13,14 @@ operator fun DoubleArray.minus(other: DoubleArray): DoubleArray {
     return arr
 }
 
-fun DoubleArray.pow(power: Double): Double {
+fun DoubleArray.powSum(power: Double): Double {
     return this.fold(0.0) { sum, e -> sum + e.pow(power) }
 }
 
-fun DoubleArray.square(): Double {
-    return pow(2.0)
+fun DoubleArray.squaredSum(): Double {
+    return powSum(2.0)
 }
 
 fun DoubleArray.norm(): Double {
-    return sqrt(square())
+    return sqrt(squaredSum())
 }
