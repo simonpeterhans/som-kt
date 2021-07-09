@@ -6,17 +6,17 @@ import kotlin.math.sqrt
 import kotlin.random.Random
 
 /**
- * Regular 2D hexagonal grid, like so:
+ * Alternating 2D hexagonal grid, where every other row is shorter by 1 element, like so:
  *
  * ```
  * x x x x
- *  x x x x
+ *  x x x
  * x x x x
- *  x x x x
+ *  x x x
  * x x x x
  * ```
  *
- * This means that the coordinates are chosen such that every (non-edge) node has 6 direct/equidistant neighbors,
+ * This still means that the coordinates are chosen such that every (non-edge) node has 6 direct/equidistant neighbors,
  * compared to the 4 in a regular square/rectangular grid.
  *
  * @property height The height of the grid.
@@ -25,7 +25,7 @@ import kotlin.random.Random
  * @property distanceFunction A distance function to calculate the neighborhood of a node.
  * @property rand The random seed to use.
  */
-class Grid2DHex(
+class Grid2DHexAlt(
     val height: Int,
     val width: Int,
     val featureDepth: Int,
@@ -34,18 +34,21 @@ class Grid2DHex(
 ) : Grid2D(intArrayOf(height, width), distanceFunction, rand) {
 
     companion object {
-        val HEX_SCALE = sqrt(3.0) / 2.0
-        const val HEX_ADDEND = 0.5
+        val HEX_HEIGHT_SCALE = sqrt(3.0) / 2.0
+        const val HEX_WIDTH_ADDEND = 0.5
     }
 
     override val nodeGrid: Array<Array<Node>> = run {
-        val nodes = Array(height) { Array(width) { Node(featureDepth, rand) } }
+        val nodes = Array(height) { Array(0) { Node() } }
 
         for (i in 0 until height) {
-            for (j in 0 until width) {
+            // If we are at an uneven row, have width - 1 columns.
+            nodes[i] = Array(if (i % 2 == 0) width else width - 1) { Node(featureDepth, rand) }
+
+            for (j in 0 until nodes[i].size) {
                 nodes[i][j].initCoords(
-                    i.toDouble() * HEX_SCALE, // Always scale height depending on current row.
-                    j.toDouble() + HEX_ADDEND * (i % 2) // Only scale width for uneven rows.
+                    i.toDouble() * HEX_HEIGHT_SCALE, // Always scale height depending on current row.
+                    j.toDouble() + HEX_WIDTH_ADDEND * (i % 2) // Only scale width for uneven rows.
                 )
             }
         }

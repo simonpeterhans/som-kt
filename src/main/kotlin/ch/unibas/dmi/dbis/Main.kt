@@ -1,8 +1,8 @@
 package ch.unibas.dmi.dbis
 
 import ch.unibas.dmi.dbis.som.SOM
-import ch.unibas.dmi.dbis.som.grids.Grid2DHexIrr
-import ch.unibas.dmi.dbis.som.util.NeighborhoodFactor
+import ch.unibas.dmi.dbis.som.grids.Grid2DHexAlt
+import ch.unibas.dmi.dbis.som.util.DistanceScalingFunction
 import ch.unibas.dmi.dbis.som.util.TimeFunction
 import mu.KotlinLogging
 import java.awt.Color
@@ -28,10 +28,10 @@ fun main() {
     val rand = Random(42)
     val data: Array<DoubleArray> = Array(size) { DoubleArray(dim) { rand.nextDouble() } }
 
-    val g = Grid2DHexIrr(height, width, dim, rand = rand)
+    val g = Grid2DHexAlt(height, width, dim, rand = rand)
     val s = SOM(
         g,
-        NeighborhoodFactor.exponentialDecreasing(),
+        DistanceScalingFunction.exponentialDecreasing(),
         alpha = TimeFunction.linearDecreasingFactorScaled(initAlpha),
         sigma = TimeFunction.linearDecreasingFactorScaled(initSigma),
         rand = rand
