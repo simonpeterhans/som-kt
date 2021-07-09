@@ -56,8 +56,8 @@ class SOM(
 
                 currIter++
 
-                if (currIter % 1000 == 0) {
-                    logger.info { "Iteration: $currIter/$maxIter" }
+                if (currIter % (maxIter / 100) == 0) {
+                    logger.info { "Training: ${100 * currIter / maxIter}% ($currIter/$maxIter)" }
                 }
             }
         }
