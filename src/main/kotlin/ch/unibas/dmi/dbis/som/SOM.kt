@@ -24,11 +24,11 @@ private val logger = KotlinLogging.logger {}
  * @property rand The random seed to use (randomized by default).
  */
 class SOM(
-    val grid: Grid,
-    val distanceScaling: DistanceScalingFunction = DistanceScalingFunction.exponentialDecreasing(),
-    val alpha: TimeFunction = TimeFunction.linearDecreasingFactorScaled(),
-    val sigma: TimeFunction = TimeFunction.defaultSigmaFunction(grid.dims),
-    val rand: Random = Random(Random.nextInt())
+    private val grid: Grid,
+    private val distanceScaling: DistanceScalingFunction = DistanceScalingFunction.exponentialDecreasing(),
+    private val alpha: TimeFunction = TimeFunction.linearDecreasingFactorScaled(),
+    private val sigma: TimeFunction = TimeFunction.defaultSigmaFunction(grid.dims),
+    private val rand: Random = Random(Random.nextInt())
 ) {
 
     /**
@@ -87,6 +87,25 @@ class SOM(
                 }
             }
         }
+    }
+
+    /**
+     * Predicts the label/node for the given samples and returns its ID and the distance.
+     *
+     * The best node is (like during training) the best matching unit, i.e., the node with the smallest distance
+     * from the sample according to the distance measure.
+     *
+     * @param data An array of samples and their features.
+     * @return A list of pairs consisting of the assigned node and distance per sample.
+     */
+    fun predict(data: Array<DoubleArray>): ArrayList<Pair<Node, Double>> {
+        val res = ArrayList<Pair<Node, Double>>(data.size)
+
+        for (e in data) {
+            res.add(grid.findBestNodeAndScore(e))
+        }
+
+        return res
     }
 
 }

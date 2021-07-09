@@ -37,12 +37,12 @@ abstract class Grid(
     abstract fun node(vararg idx: Int): Node
 
     /**
-     * Finds the id of the best (i.e., closest/smallest sum of squares) node for a given sample.
+     * Finds the id and distance of the best (i.e., closest/smallest sum of squares) node for a given sample.
      *
-     * @param sample The sample to find the closest node for.
-     * @return The index of the best node for the provided sample.
+     * @param sample The sample to find the closest node index for.
+     * @return The index and distance of the best node for the provided sample as a pair.
      */
-    fun findBestNodeId(sample: DoubleArray): Int {
+    fun findBestNodeIdAndScore(sample: DoubleArray): Pair<Int, Double> {
         val bestList = ArrayList<Int>(nodes.size)
         var currBestVal = Double.MAX_VALUE
 
@@ -59,7 +59,19 @@ abstract class Grid(
             }
         }
 
-        return bestList[rand.nextInt(0, bestList.size)]
+        return Pair(bestList[rand.nextInt(0, bestList.size)], currBestVal)
+    }
+
+    /**
+     * Finds the best (i.e., closest/smallest sum of squares) node and its distance for a given sample.
+     *
+     * @param sample The sample to find the closest node for.
+     * @return The best node and its distance for the provided sample as a pair.
+     */
+    fun findBestNodeAndScore(sample: DoubleArray): Pair<Node, Double> {
+        val pair = findBestNodeIdAndScore(sample)
+
+        return Pair(nodes[pair.first], pair.second)
     }
 
     /**
@@ -69,7 +81,7 @@ abstract class Grid(
      * @return The best node for the provided sample.
      */
     fun findBestNode(sample: DoubleArray): Node {
-        return nodes[findBestNodeId(sample)]
+        return nodes[findBestNodeIdAndScore(sample).first]
     }
 
     /**
