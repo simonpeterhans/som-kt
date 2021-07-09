@@ -10,15 +10,15 @@ class Grid2DHex(
     val width: Int,
     val featureDepth: Int,
     neighborhoodFunction: NeighborhoodFunction = NeighborhoodFunction.euclideanNorm(),
-    val rand: Random = Random(Random.nextInt())
-) : GridRegularND(intArrayOf(height, width), neighborhoodFunction) {
+    rand: Random = Random(Random.nextInt())
+) : Grid2D(intArrayOf(height, width), neighborhoodFunction, rand) {
 
     companion object {
         val HEX_HEIGHT_SCALE = sqrt(3.0) / 2.0
         const val HEX_WIDTH_ADDEND = 0.5
     }
 
-    val nodeGrid: Array<Array<Node>> = run {
+    override val nodeGrid: Array<Array<Node>> = run {
         val nodes = Array(height) { Array(width) { Node(featureDepth, rand) } }
 
         for (i in 0 until height) {
@@ -31,7 +31,5 @@ class Grid2DHex(
     }
 
     override val nodes: Array<Node> = nodeGrid.flatten().toTypedArray()
-
-    override fun node(vararg idx: Int): Node = nodeGrid[idx[0]][idx[1]]
 
 }

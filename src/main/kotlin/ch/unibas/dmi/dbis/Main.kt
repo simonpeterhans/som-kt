@@ -8,6 +8,7 @@ import mu.KotlinLogging
 import java.awt.Color
 import java.awt.image.BufferedImage
 import java.io.File
+import java.nio.file.Files
 import javax.imageio.ImageIO
 import kotlin.math.sqrt
 import kotlin.random.Random
@@ -64,7 +65,12 @@ fun main() {
         }
     }
 
-    val out = File("img.png")
+    val path = File("data/")
+    val fileName = "img.png"
+
+    Files.createDirectories(path.toPath())
+
+    val out = File(path.resolve(fileName).toURI())
     ImageIO.write(im, "png", out)
 
     logger.info { "Done." }

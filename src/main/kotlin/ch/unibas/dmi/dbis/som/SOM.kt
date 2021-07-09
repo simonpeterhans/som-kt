@@ -13,7 +13,7 @@ class SOM(
     val grid: Grid,
     val neighborhood: NeighborhoodFactor = NeighborhoodFactor.exponentialDecreasing(),
     val alpha: TimeFunction = TimeFunction.linearDecreasingFactorScaled(),
-    val sigma: TimeFunction = TimeFunction.linearDecreasingFactorScaled(),
+    val sigma: TimeFunction = TimeFunction.linearDecreasingFactorScaled(grid.dims),
     val rand: Random = Random(Random.nextInt())
 ) {
 

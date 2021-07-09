@@ -4,32 +4,36 @@ import ch.unibas.dmi.dbis.som.Node
 import ch.unibas.dmi.dbis.som.util.NeighborhoodFunction
 import ch.unibas.dmi.dbis.som.util.minus
 import ch.unibas.dmi.dbis.som.util.squaredSum
+import kotlin.random.Random
 
 abstract class Grid(
-    val neighborhoodFunction: NeighborhoodFunction = NeighborhoodFunction.euclideanNorm()
+    val dims: IntArray,
+    val neighborhoodFunction: NeighborhoodFunction,
+    val rand: Random,
 ) {
 
     abstract val nodes: Array<Node>
 
-    abstract fun indexTo1D(vararg idx: Int): Int
-
     abstract fun node(vararg idx: Int): Node
 
     fun findBestNodeId(sample: DoubleArray): Int {
-        var currBestIdx1D = -1
+        val bestList = ArrayList<Int>(nodes.size)
         var currBestVal = Double.MAX_VALUE
 
-        // TODO Handle ties by randomizing from a list.
         for (i in nodes.indices) {
             val currVal = (nodes[i].weights - sample).squaredSum()
 
             if (currVal < currBestVal) {
                 currBestVal = currVal
-                currBestIdx1D = i
+
+                bestList.clear()
+                bestList.add(i)
+            } else if (currVal == currBestVal) {
+                bestList.add(i)
             }
         }
 
-        return currBestIdx1D
+        return bestList[rand.nextInt(0, bestList.size)]
     }
 
     fun findBestNode(sample: DoubleArray): Node {
