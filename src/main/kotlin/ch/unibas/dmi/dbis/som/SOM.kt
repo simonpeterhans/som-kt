@@ -3,7 +3,6 @@ package ch.unibas.dmi.dbis.som
 import ch.unibas.dmi.dbis.som.grids.Grid
 import ch.unibas.dmi.dbis.som.util.NeighborhoodFactor
 import ch.unibas.dmi.dbis.som.util.TimeFunction
-import ch.unibas.dmi.dbis.som.util.minus
 import mu.KotlinLogging
 import kotlin.random.Random
 
@@ -18,6 +17,7 @@ class SOM(
 ) {
 
     private fun step(sample: DoubleArray, t: Int, T: Int) {
+        // Get learn rate (a) and sigma for current iteration.
         val a = alpha.atTime(t, T)
         val s = sigma.atTime(t, T)
 
@@ -28,20 +28,10 @@ class SOM(
         val dists = grid.calcNodeDistancesToPoint(bestNode.coords)
 
         // Calculate neighborhood factor for every node (further away = smaller factor).
-        val neighborhoods = dists.map { d -> a * neighborhood.getDistanceFactor(d, s, a) }.toDoubleArray()
+        val neighborhoodFactors = dists.map { d -> a * neighborhood.getDistanceFactor(d, s, a) }.toDoubleArray()
 
-        // Calculate delta for every node.
-        var delta: DoubleArray
-
-        for (i in grid.nodes.indices) {
-            // 1. Calculate difference of node weights to sample.
-            delta = sample - grid.nodes[i].weights
-
-            // 2. Multiply differences by neighborhood factor and add.
-            for (j in delta.indices) {
-                grid.nodes[i].weights[j] += delta[j] * neighborhoods[i]
-            }
-        }
+        // Update grid weights.
+        grid.updateWeights(sample, neighborhoodFactors)
     }
 
     fun train(data: Array<DoubleArray>, epochs: Int) {
