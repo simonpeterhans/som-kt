@@ -14,7 +14,13 @@ operator fun DoubleArray.minus(other: DoubleArray): DoubleArray {
 }
 
 fun DoubleArray.powSum(power: Double): Double {
-    return this.fold(0.0) { sum, e -> sum + e.pow(power) }
+    var sum = 0.0
+
+    for (e in this) {
+        sum += e.pow(power)
+    }
+
+    return sum
 }
 
 fun DoubleArray.squaredSum(): Double {

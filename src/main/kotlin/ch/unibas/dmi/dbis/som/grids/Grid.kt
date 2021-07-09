@@ -50,19 +50,4 @@ abstract class Grid(
         return distances
     }
 
-    fun updateWeights(sample: DoubleArray, neighborhoodFactors: DoubleArray) {
-        // Calculate delta for every node.
-        var delta: DoubleArray
-
-        for (i in nodes.indices) {
-            // 1. Calculate difference of node weights to sample.
-            delta = sample - nodes[i].weights
-
-            // 2. Multiply differences by neighborhood factor and add.
-            for (j in delta.indices) {
-                nodes[i].weights[j] += delta[j] * neighborhoodFactors[i]
-            }
-        }
-    }
-
 }

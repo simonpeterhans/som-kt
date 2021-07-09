@@ -27,11 +27,19 @@ class SOM(
         // Calculate distances of all nodes to the best matching node.
         val dists = grid.calcNodeDistancesToPoint(bestNode.coords)
 
-        // Calculate neighborhood factor for every node (further away = smaller factor).
-        val neighborhoodFactors = dists.map { d -> a * neighborhood.getDistanceFactor(d, s, a) }.toDoubleArray()
+        // Update every node based on the distance factor and weight delta.
+        for (i in dists.indices) {
+            // Calculate delta factor based on distance.
+            val deltaFactor = a * neighborhood.getDistanceFactor(dists[i], s, a)
 
-        // Update grid weights.
-        grid.updateWeights(sample, neighborhoodFactors)
+            // Get node weights to update.
+            val nodeWeights = grid.nodes[i].weights
+
+            // Update every node weight.
+            for (j in nodeWeights.indices) {
+                nodeWeights[j] += (sample[j] - nodeWeights[j]) * deltaFactor
+            }
+        }
     }
 
     fun train(data: Array<DoubleArray>, epochs: Int) {
