@@ -4,6 +4,7 @@ import ch.unibas.dmi.dbis.som.grids.Grid
 import ch.unibas.dmi.dbis.som.util.DistanceScalingFunction
 import ch.unibas.dmi.dbis.som.util.TimeFunction
 import mu.KotlinLogging
+import kotlin.math.max
 import kotlin.random.Random
 
 private val logger = KotlinLogging.logger {}
@@ -82,7 +83,7 @@ class SOM(
 
                 currIter++
 
-                if (currIter % (maxIter / 100) == 0) {
+                if (currIter % max(maxIter / 100, 1) == 0) {
                     logger.info { "Training: ${100 * currIter / maxIter}% ($currIter/$maxIter)" }
                 }
             }
