@@ -1,6 +1,9 @@
 package ch.unibas.dmi.dbis.som.util
 
 import kotlin.math.abs
+import kotlin.math.min
+import kotlin.math.pow
+import kotlin.math.sqrt
 
 /**
  * Generic neighborhood functions to evaluate the distance from one vector (1D array) to another.
@@ -77,6 +80,43 @@ fun interface DistanceFunction {
          */
         fun squaredDistance(): DistanceFunction {
             return DistanceFunction { first, second -> (first - second).squaredSum() }
+        }
+
+        /**
+         * Creates a distance function for the Euclidean norm (sqrt of sum of squared distances),
+         * wrapping around the specified dimensions (height and/or width).
+         *
+         * @param dims The dimension of the grid.
+         * @param doWrapDim An array of Booleans, wrapping around for the dimensions for the true entries.
+         * @return A DistanceFunction object for the Euclidean norm.
+         */
+        fun euclideanNorm2DTorus(dims: IntArray, doWrapDim: BooleanArray): DistanceFunction {
+            return DistanceFunction { first, second ->
+                var sum = 0.0
+
+                for (i in dims.indices) {
+                    val diff = first[i] - second[i]
+
+                    sum += if (doWrapDim[i]) {
+                        min((diff), dims[i] - abs(diff)).pow(2.0)
+                    } else {
+                        (diff).pow(2.0)
+                    }
+                }
+
+                sqrt(sum)
+            }
+        }
+
+        /**
+         * Creates a distance function for the Euclidean norm (sqrt of sum of squared distances),
+         * wrapping the grid around in both dimensions.
+         *
+         * @param dims The dimension of the grid.
+         * @return A DistanceFunction object for the Euclidean norm.
+         */
+        fun euclideanNorm2DTorus(dims: IntArray): DistanceFunction {
+            return euclideanNorm2DTorus(dims, booleanArrayOf(true, true))
         }
 
     }

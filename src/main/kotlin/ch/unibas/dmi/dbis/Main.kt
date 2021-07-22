@@ -1,7 +1,8 @@
 package ch.unibas.dmi.dbis
 
 import ch.unibas.dmi.dbis.som.SOM
-import ch.unibas.dmi.dbis.som.grids.Grid2DHexAlt
+import ch.unibas.dmi.dbis.som.grids.Grid2DSquare
+import ch.unibas.dmi.dbis.som.util.DistanceFunction
 import ch.unibas.dmi.dbis.som.util.DistanceScalingFunction
 import ch.unibas.dmi.dbis.som.util.TimeFunction
 import mu.KotlinLogging
@@ -17,18 +18,25 @@ private val logger = KotlinLogging.logger {}
 
 fun main() {
 
+    val rand = Random(Random.nextInt())
     val width = 16
     val height = 4
     val dim = 3
-    val epochs = 100
-    val size = 100000
+    val epochs = 1
+    val size = 1000000
     val initAlpha = 1.0
-    val initSigma = 1.0 * (sqrt(width.toDouble() * width.toDouble() + height.toDouble() * height.toDouble()))
+    val initSigma = 2.0 * (sqrt(width.toDouble() * width.toDouble() + height.toDouble() * height.toDouble()))
 
-    val rand = Random(42)
     val data: Array<DoubleArray> = Array(size) { DoubleArray(dim) { rand.nextDouble() } }
 
-    val g = Grid2DHexAlt(height, width, dim, rand = rand)
+    val g = Grid2DSquare(
+        height,
+        width,
+        dim,
+        DistanceFunction.euclideanNorm2DTorus(intArrayOf(height, width), booleanArrayOf(false, true)),
+        rand = rand
+    )
+
     val s = SOM(
         g,
         DistanceScalingFunction.exponentialDecreasing(),
@@ -44,9 +52,20 @@ fun main() {
     s.train(data, epochs)
 
     logger.info { "Train time: ${System.currentTimeMillis() - start} ms." }
+
+    logger.info { "Predicting..." }
+
+    val res = s.predict(
+        arrayOf(
+            doubleArrayOf(1.0, 0.0, 0.0),
+            doubleArrayOf(0.0, 1.0, 0.0),
+            doubleArrayOf(0.0, 0.0, 1.0)
+        )
+    )
+
     logger.info { "Writing image..." }
 
-    val im = BufferedImage(2 * width - 1, height, BufferedImage.TYPE_INT_RGB)
+    val im = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
     val nodes = g.nodeGrid
 
     for (i in 0 until height) {
@@ -57,11 +76,7 @@ fun main() {
                 nodes[i][j].weights[2].toFloat()
             )
 
-            if (i % 2 == 0) {
-                im.setRGB(2 * j, i, color.rgb)
-            } else {
-                im.setRGB(2 * j + 1, i, color.rgb)
-            }
+            im.setRGB(j, i, color.rgb)
         }
     }
 
