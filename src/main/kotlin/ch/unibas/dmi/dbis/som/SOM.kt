@@ -25,7 +25,7 @@ private val logger = KotlinLogging.logger {}
  * @property rand The random seed to use (randomized by default).
  */
 class SOM(
-    private val grid: Grid,
+    val grid: Grid,
     private val distanceScaling: DistanceScalingFunction = DistanceScalingFunction.exponentialDecreasing(),
     private val alpha: TimeFunction = TimeFunction.linearDecreasingFactorScaled(),
     private val sigma: TimeFunction = TimeFunction.defaultSigmaFunction(grid.dims),
