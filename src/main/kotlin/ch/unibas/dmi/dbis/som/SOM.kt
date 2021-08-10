@@ -91,19 +91,32 @@ class SOM(
     }
 
     /**
-     * Predicts the label/node for the given samples and returns its ID and the distance.
+     * Predicts the label/node for a single sample and returns the node ID and distance to the node.
      *
      * The best node is (like during training) the best matching unit, i.e., the node with the smallest distance
      * from the sample according to the distance measure.
      *
-     * @param data An array of samples and their features.
-     * @return A list of pairs consisting of the assigned node and distance per sample.
+     * @param sample The sample to predict the node and distance for.
+     * @return The resulting node ID and distance to the node.
      */
-    fun predict(data: Array<DoubleArray>): ArrayList<Pair<Node, Double>> {
-        val res = ArrayList<Pair<Node, Double>>(data.size)
+    fun predict(sample: DoubleArray): PredictionResult {
+        return grid.findBestNodeIdAndScore(sample)
+    }
+
+    /**
+     * Predicts the label/node for the given samples, returning the node ID and the distance to the node for every sample.
+     *
+     * The best node is (like during training) the best matching unit, i.e., the node with the smallest distance
+     * from the sample according to the distance measure.
+     *
+     * @param data An array of samples and their features to predict the node and distance for.
+     * @return A list of prediction results with the predicted node ID and distance to the node.
+     */
+    fun predict(data: Array<DoubleArray>): ArrayList<PredictionResult> {
+        val res = ArrayList<PredictionResult>(data.size)
 
         for (e in data) {
-            res.add(grid.findBestNodeAndScore(e))
+            res.add(predict(e))
         }
 
         return res

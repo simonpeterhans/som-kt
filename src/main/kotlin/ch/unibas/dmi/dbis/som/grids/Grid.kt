@@ -1,6 +1,7 @@
 package ch.unibas.dmi.dbis.som.grids
 
 import ch.unibas.dmi.dbis.som.Node
+import ch.unibas.dmi.dbis.som.PredictionResult
 import ch.unibas.dmi.dbis.som.util.DistanceFunction
 import ch.unibas.dmi.dbis.som.util.minus
 import ch.unibas.dmi.dbis.som.util.squaredSum
@@ -42,7 +43,7 @@ abstract class Grid(
      * @param sample The sample to find the closest node index for.
      * @return The index and distance of the best node for the provided sample as a pair.
      */
-    fun findBestNodeIdAndScore(sample: DoubleArray): Pair<Int, Double> {
+    fun findBestNodeIdAndScore(sample: DoubleArray): PredictionResult {
         val bestList = ArrayList<Int>(nodes.size)
         var currBestVal = Double.MAX_VALUE
 
@@ -59,19 +60,7 @@ abstract class Grid(
             }
         }
 
-        return Pair(bestList[rand.nextInt(0, bestList.size)], currBestVal)
-    }
-
-    /**
-     * Finds the best (i.e., closest/smallest sum of squares) node and its distance for a given sample.
-     *
-     * @param sample The sample to find the closest node for.
-     * @return The best node and its distance for the provided sample as a pair.
-     */
-    fun findBestNodeAndScore(sample: DoubleArray): Pair<Node, Double> {
-        val pair = findBestNodeIdAndScore(sample)
-
-        return Pair(nodes[pair.first], pair.second)
+        return PredictionResult(bestList[rand.nextInt(0, bestList.size)], currBestVal)
     }
 
     /**
@@ -81,7 +70,7 @@ abstract class Grid(
      * @return The best node for the provided sample.
      */
     fun findBestNode(sample: DoubleArray): Node {
-        return nodes[findBestNodeIdAndScore(sample).first]
+        return nodes[findBestNodeIdAndScore(sample).nodeId]
     }
 
     /**
