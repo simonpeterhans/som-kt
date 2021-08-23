@@ -21,17 +21,17 @@ import kotlin.random.Random
  *
  * @property height The height of the grid.
  * @property width The width of the grid.
- * @property featureDepth The dimension of the feature vector that will be used by the nodes on this grid.
- * @property distanceFunction A distance function to calculate the neighborhood of a node.
+ * @property distanceFunction A distance function to calculate the distance between the sample and the best matching node.
+ * @property neighborhoodFunction A distance function to calculate the neighborhood of a node.
  * @property rand The random seed to use.
  */
 class Grid2DHexAlt(
     val height: Int,
     val width: Int,
-    val featureDepth: Int,
-    distanceFunction: DistanceFunction = DistanceFunction.euclideanNorm(),
+    distanceFunction: DistanceFunction = DistanceFunction.squaredDistance(),
+    neighborhoodFunction: DistanceFunction = DistanceFunction.euclideanNorm(),
     rand: Random = Random(Random.nextInt())
-) : Grid2D(intArrayOf(height, width), distanceFunction, rand) {
+) : Grid2D(intArrayOf(height, width), distanceFunction, neighborhoodFunction, rand) {
 
     companion object {
         val HEX_HEIGHT_SCALE = sqrt(3.0) / 2.0
@@ -43,7 +43,7 @@ class Grid2DHexAlt(
 
         for (i in 0 until height) {
             // If we are at an uneven row, have width - 1 columns.
-            nodes[i] = Array(if (i % 2 == 0) width else width - 1) { Node(featureDepth, rand) }
+            nodes[i] = Array(if (i % 2 == 0) width else width - 1) { Node() }
 
             for (j in 0 until nodes[i].size) {
                 nodes[i][j].initCoords(

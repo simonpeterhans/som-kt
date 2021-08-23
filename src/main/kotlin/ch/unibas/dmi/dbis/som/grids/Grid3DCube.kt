@@ -10,21 +10,21 @@ import kotlin.random.Random
  * @property height The height of the grid.
  * @property width The width of the grid.
  * @property depth The depth of the grid.
- * @property featureDepth The dimension of the feature vector that will be used by the nodes on this grid.
- * @property distanceFunction A distance function to calculate the neighborhood of a node.
+ * @property distanceFunction A distance function to calculate the distance between the sample and the best matching node.
+ * @property neighborhoodFunction A distance function to calculate the neighborhood of a node.
  * @property rand The random seed to use.
  */
 class Grid3DCube(
     val height: Int,
     val width: Int,
     val depth: Int,
-    val featureDepth: Int,
-    distanceFunction: DistanceFunction = DistanceFunction.euclideanNorm(),
+    distanceFunction: DistanceFunction = DistanceFunction.squaredDistance(),
+    neighborhoodFunction: DistanceFunction = DistanceFunction.euclideanNorm(),
     rand: Random = Random(Random.nextInt())
-) : Grid3D(intArrayOf(height, width, depth), distanceFunction, rand) {
+) : Grid3D(intArrayOf(height, width, depth), distanceFunction, neighborhoodFunction, rand) {
 
     override val nodeGrid: Array<Array<Array<Node>>> = run {
-        val nodes = Array(height) { Array(width) { Array(depth) { Node(featureDepth, rand) } } }
+        val nodes = Array(height) { Array(width) { Array(depth) { Node() } } }
 
         for (i in 0 until height) {
             for (j in 0 until width) {

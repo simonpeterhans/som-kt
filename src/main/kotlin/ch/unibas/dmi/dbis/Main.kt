@@ -32,10 +32,14 @@ fun main() {
     val g = Grid2DSquare(
         height,
         width,
-        dim,
-        DistanceFunction.euclideanNorm2DTorus(intArrayOf(height, width), booleanArrayOf(false, true)),
+        neighborhoodFunction = DistanceFunction.euclideanNorm2DTorus(
+            intArrayOf(height, width),
+            booleanArrayOf(false, true)
+        ),
         rand = rand
     )
+
+    g.initializeNormalizedWeights(dim)
 
     val s = SOM(
         g,
