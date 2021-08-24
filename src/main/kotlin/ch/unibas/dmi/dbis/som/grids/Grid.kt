@@ -38,24 +38,44 @@ abstract class Grid(
     abstract fun node(vararg idx: Int): Node
 
     /**
-     * Initializes weights for all nodes randomly within a range (defaults to [0.0, 1.0]).
-     * If you need a more specific weight instantiation, you can initialize the weights individually for each node
-     * instead.
+     * Initializes weights for all nodes randomly within a specified range for every dimension of the feature.
      *
      * @param depth The feature depth (i.e., the dimension of the weight vector).
+     * @param lowerBoundArray An array of minimum values in the range to randomize from for every index.
+     * @param upperBoundArray An array of maximum values in the range to randomize from for every index.
      * @param altRand An alternative random seed to use (the random seed of this object will be used if not provided).
-     * @param from The minimum value of the range to randomize from.
-     * @param to The maximum value of the range to randomize from
      * @return This Grid object for chaining.
      */
     fun initializeWeights(
         depth: Int,
-        altRand: Random = rand,
-        from: Double = 0.0,
-        to: Double = 1.0
+        lowerBoundArray: DoubleArray,
+        upperBoundArray: DoubleArray,
+        altRand: Random = rand
     ): Grid {
         for (n in nodes) {
-            n.initWeights(depth, altRand, from, to)
+            n.initWeights(depth, lowerBoundArray, upperBoundArray, altRand)
+        }
+
+        return this
+    }
+
+    /**
+     * Initializes weights for all nodes randomly within a range (defaults to [0.0, 1.0]).
+     *
+     * @param depth The feature depth (i.e., the dimension of the weight vector).
+     * @param lowerBound The minimum value of the range to randomize from.
+     * @param upperBound The maximum value of the range to randomize from
+     * @param altRand An alternative random seed to use (the random seed of this object will be used if not provided).
+     * @return This Grid object for chaining.
+     */
+    fun initializeWeights(
+        depth: Int,
+        lowerBound: Double = 0.0,
+        upperBound: Double = 1.0,
+        altRand: Random = rand
+    ): Grid {
+        for (n in nodes) {
+            n.initWeights(depth, lowerBound, upperBound, altRand)
         }
 
         return this
