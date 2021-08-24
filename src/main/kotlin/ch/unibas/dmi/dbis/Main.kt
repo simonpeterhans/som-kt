@@ -39,7 +39,7 @@ fun main() {
         rand = rand
     )
 
-    g.initializeNormalizedWeights(dim)
+    g.initializeWeights(dim, rand)
 
     val s = SOM(
         g,

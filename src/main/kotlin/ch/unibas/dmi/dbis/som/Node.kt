@@ -7,15 +7,16 @@ import kotlin.random.Random
  */
 class Node() {
 
-    lateinit var coords: DoubleArray
-    lateinit var weights: DoubleArray
+    private var _coords: DoubleArray? = null
+    val coords: DoubleArray
+        get() = _coords ?: throw UninitializedPropertyAccessException("Node coordinates have not been initialized!")
+
+    private var _weights: DoubleArray? = null
+    val weights: DoubleArray
+        get() = _weights ?: throw UninitializedPropertyAccessException("Node weights have not been initialized!")
 
     constructor(coords: DoubleArray) : this() {
-        this.coords = coords
-    }
-
-    constructor(depth: Int, rand: Random = Random(Random.nextInt())) : this() {
-        initWeights(depth, rand)
+        this._coords = coords
     }
 
     /**
@@ -24,7 +25,7 @@ class Node() {
      * @param coords The coordinates as doubles.
      */
     fun initCoords(vararg coords: Double) {
-        this.coords = coords
+        this._coords = coords
     }
 
     /**
@@ -36,7 +37,7 @@ class Node() {
      * @param to The maximum value in the range to randomize from.
      */
     fun initWeights(depth: Int, rand: Random = Random(Random.nextInt()), from: Double = 0.0, to: Double = 1.0) {
-        weights = DoubleArray(depth) { rand.nextDouble(from, to) }
+        _weights = DoubleArray(depth) { rand.nextDouble(from, to) }
     }
 
 }

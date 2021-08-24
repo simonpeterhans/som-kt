@@ -38,49 +38,24 @@ abstract class Grid(
     abstract fun node(vararg idx: Int): Node
 
     /**
-     * Initializes node weights in the default range [0.0, 1.0].
+     * Initializes weights for all nodes randomly within a range (defaults to [0.0, 1.0]).
+     * If you need a more specific weight instantiation, you can initialize the weights individually for each node
+     * instead.
      *
      * @param depth The feature depth (i.e., the dimension of the weight vector).
      * @param altRand An alternative random seed to use (the random seed of this object will be used if not provided).
+     * @param from The minimum value of the range to randomize from.
+     * @param to The maximum value of the range to randomize from
      * @return This Grid object for chaining.
      */
-    fun initializeNormalizedWeights(
+    fun initializeWeights(
         depth: Int,
-        altRand: Random = rand
+        altRand: Random = rand,
+        from: Double = 0.0,
+        to: Double = 1.0
     ): Grid {
         for (n in nodes) {
-            n.initWeights(depth, altRand)
-        }
-
-        return this
-    }
-
-    /**
-     * Initializes node weights randomly between a minimum and a maximum based on splits.
-     * If you have different features concatenated in your array, you may want to use different weight initializations.
-     * You can achieve this by specifying the size of a split and a minimum and a maximum for every split.
-     *
-     * @param depth The feature depth (i.e., the dimension of the weight vector).
-     * @param splitSize The size of the splits to use for weight initialization.
-     * @param minVals An array of minimum values for each split.
-     * @param maxVals An array of maximum values for each split.
-     * @param altRand An alternative random seed to use (the random seed of this object will be used if not provided).
-     * @return This Grid object for chaining.
-     */
-    fun initializeNodeWeightsBySplit(
-        depth: Int,
-        splitSize: IntArray,
-        minVals: DoubleArray,
-        maxVals: DoubleArray,
-        altRand: Random = rand
-    ): Grid {
-        var currIdx = 0
-
-        for (i in splitSize.indices) {
-            for (numVals in 0 until splitSize[i]) {
-                nodes[currIdx].initWeights(depth, altRand, minVals[i], maxVals[i])
-                currIdx++
-            }
+            n.initWeights(depth, altRand, from, to)
         }
 
         return this
