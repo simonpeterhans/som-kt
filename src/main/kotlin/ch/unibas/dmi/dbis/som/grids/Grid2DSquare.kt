@@ -1,7 +1,7 @@
 package ch.unibas.dmi.dbis.som.grids
 
 import ch.unibas.dmi.dbis.som.Node
-import ch.unibas.dmi.dbis.som.util.DistanceFunction
+import ch.unibas.dmi.dbis.som.functions.DistanceFunction
 import kotlin.random.Random
 
 /**

@@ -1,5 +1,8 @@
-package ch.unibas.dmi.dbis.som.util
+package ch.unibas.dmi.dbis.som.functions
 
+import ch.unibas.dmi.dbis.som.util.minus
+import ch.unibas.dmi.dbis.som.util.norm
+import ch.unibas.dmi.dbis.som.util.squaredSum
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.pow

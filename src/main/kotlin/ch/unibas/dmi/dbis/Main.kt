@@ -1,10 +1,10 @@
 package ch.unibas.dmi.dbis
 
 import ch.unibas.dmi.dbis.som.SOM
+import ch.unibas.dmi.dbis.som.functions.DistanceFunction
+import ch.unibas.dmi.dbis.som.functions.NeighborhoodFunction
+import ch.unibas.dmi.dbis.som.functions.TimeFunction
 import ch.unibas.dmi.dbis.som.grids.Grid2DHex
-import ch.unibas.dmi.dbis.som.util.DistanceFunction
-import ch.unibas.dmi.dbis.som.util.NeighborhoodFunction
-import ch.unibas.dmi.dbis.som.util.TimeFunction
 import mu.KotlinLogging
 import java.awt.Color
 import java.awt.image.BufferedImage
@@ -51,7 +51,6 @@ fun main() {
 
     g.initializeWeights(dim)
 
-
     val s = SOM(
         g,
         NeighborhoodFunction.exponentialDecreasing(),
@@ -86,14 +85,13 @@ fun main() {
     }
 
     val path = File("data/")
-    val fileName = "out.png"
-
+    val fileName = "out"
     Files.createDirectories(path.toPath())
 
-    val out = File(path.resolve(fileName).toURI())
+    val out = File(path.resolve("$fileName.png").toURI())
     ImageIO.write(im, "png", out)
 
-    File("data/out.csv").printWriter().use { o ->
+    File(path.resolve("$fileName.csv").toURI()).printWriter().use { o ->
         o.println("i,r,g,b")
         for (i in g.nodes.indices) {
             val w = g.nodes[i].weights

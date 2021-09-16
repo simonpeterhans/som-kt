@@ -1,4 +1,4 @@
-package ch.unibas.dmi.dbis.som.util
+package ch.unibas.dmi.dbis.som.functions
 
 import kotlin.math.sqrt
 

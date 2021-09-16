@@ -1,8 +1,8 @@
 package ch.unibas.dmi.dbis.som
 
+import ch.unibas.dmi.dbis.som.functions.NeighborhoodFunction
+import ch.unibas.dmi.dbis.som.functions.TimeFunction
 import ch.unibas.dmi.dbis.som.grids.Grid
-import ch.unibas.dmi.dbis.som.util.NeighborhoodFunction
-import ch.unibas.dmi.dbis.som.util.TimeFunction
 import mu.KotlinLogging
 import kotlin.math.max
 import kotlin.random.Random
@@ -10,16 +10,14 @@ import kotlin.random.Random
 private val logger = KotlinLogging.logger {}
 
 /**
- * Creates a new Self Organizing Map for a given grid and parameters.
- *
- * Used to train the network defined on the [Grid] object in order to classify samples after training.
+ * Wrapper object used to train a self-organizing map on [Grid] objects.
  *
  * Depending on the use case it is advisable to make use of different [TimeFunction] implementations
  * for alpha (learning rate) and sigma as well as a different neighborhood [NeighborhoodFunction]
  * to fit the problem at hand.
  *
  * @property grid The grid object defining the structure to use for this SOM instance.
- * @property neighborhoodFunction A function to scale the delta of sample and node weights.
+ * @property neighborhoodFunction A function to scale the delta of sample and node weights during training.
  * @property alpha A time function (depending on iteration number) for the learn rate.
  * @property sigma A time function (depending on the iteration number) to scale neighborhood distance factor.
  * @property rand The random seed to use for shuffling (randomized by default).
