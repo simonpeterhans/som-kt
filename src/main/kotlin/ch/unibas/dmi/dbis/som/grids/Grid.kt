@@ -13,14 +13,12 @@ import kotlin.random.Random
  * with the first index moving down and the second index moving right.
  *
  * @property dims An int array describing the size of every dimension of this grid.
- * @property distanceFunction A distance function to calculate the distance between the sample and the best matching node.
- * @property neighborhoodFunction A distance function to calculate the neighborhood of a node.
+ * @property distanceFunction A distance function to calculate the distance between two nodes on the grid.
  * @property rand The random seed to use.
  */
 abstract class Grid(
     val dims: IntArray,
     val distanceFunction: DistanceFunction,
-    val neighborhoodFunction: DistanceFunction,
     val rand: Random,
 ) {
 
@@ -30,12 +28,24 @@ abstract class Grid(
     abstract val nodes: Array<Node>
 
     /**
+     * A distance function to calculate the distance between the sample and the best matching node.
+     */
+    var bmuDistanceFunction: DistanceFunction = DistanceFunction.squaredDistance()
+
+    /**
      * Obtains a node from the grid by the given coordinates (NOT necessarily checked!).
      *
      * @param idx Integers describing the index of the node to retrieve.
      * @return The node at the specified index.
      */
     abstract fun node(vararg idx: Int): Node
+
+    /**
+     * Returns the number of nodes in the grid.
+     *
+     * @return The number of nodes in the grid.
+     */
+    fun getSize(): Int = nodes.size
 
     /**
      * Initializes weights for all nodes randomly within a specified range for every dimension of the feature.
@@ -92,7 +102,7 @@ abstract class Grid(
         var currBestVal = Double.MAX_VALUE
 
         for (i in nodes.indices) {
-            val currVal = distanceFunction.apply(nodes[i].weights, sample)
+            val currVal = bmuDistanceFunction.apply(nodes[i].weights, sample)
 
             if (currVal < currBestVal) {
                 currBestVal = currVal
@@ -125,11 +135,11 @@ abstract class Grid(
      * @param point The point to calculate the distances to.
      * @return An array of doubles containing the distances for all the nodes in the grid.
      */
-    fun calcNodeDistancesToPoint(point: DoubleArray): DoubleArray {
+    fun getNodeDistsToPoint(point: DoubleArray): DoubleArray {
         val distances = DoubleArray(nodes.size) { 0.0 }
 
         for (i in nodes.indices) {
-            distances[i] = neighborhoodFunction.apply(nodes[i].coords, point)
+            distances[i] = distanceFunction.apply(nodes[i].coords, point)
         }
 
         return distances

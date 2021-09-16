@@ -8,16 +8,14 @@ import kotlin.random.Random
  * Generic 2D grid.
  *
  * @property dims An int array describing the size of every dimension of this grid.
- * @property distanceFunction A distance function to calculate the distance between the sample and the best matching node.
- * @property neighborhoodFunction A distance function to calculate the neighborhood of a node.
+ * @property distanceFunction A distance function to calculate the distance between two nodes on the grid.
  * @property rand The random seed to use.
  */
 abstract class Grid2D(
     dims: IntArray,
     distanceFunction: DistanceFunction,
-    neighborhoodFunction: DistanceFunction,
     rand: Random,
-) : Grid(dims, distanceFunction, neighborhoodFunction, rand) {
+) : Grid(dims, distanceFunction, rand) {
 
     /**
      * 2D array for easier access (in addition to the 1D array used by the [Grid] base class).

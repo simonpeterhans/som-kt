@@ -1,9 +1,9 @@
 package ch.unibas.dmi.dbis
 
 import ch.unibas.dmi.dbis.som.SOM
-import ch.unibas.dmi.dbis.som.grids.Grid2DSquare
+import ch.unibas.dmi.dbis.som.grids.Grid2DHex
 import ch.unibas.dmi.dbis.som.util.DistanceFunction
-import ch.unibas.dmi.dbis.som.util.DistanceScalingFunction
+import ch.unibas.dmi.dbis.som.util.NeighborhoodFunction
 import ch.unibas.dmi.dbis.som.util.TimeFunction
 import mu.KotlinLogging
 import java.awt.Color
@@ -18,32 +18,29 @@ private val logger = KotlinLogging.logger {}
 
 fun main() {
 
-    val rand = Random(Random.nextInt())
-    val width = 16
-    val height = 4
+    val rand = Random(0)
+    val width = 5
+    val height = 5
     val dim = 3
     val epochs = 1
-    val size = 1000000
-    val initAlpha = 1.0
-    val initSigma = 2.0 * (sqrt(width.toDouble() * width.toDouble() + height.toDouble() * height.toDouble()))
+    val size = 10000
+    val initAlpha = 0.9
+    val initSigma = 0.5 * sqrt((width * width + height * height).toDouble())
 
     val data: Array<DoubleArray> = Array(size) { DoubleArray(dim) { rand.nextDouble() } }
 
-    val g = Grid2DSquare(
+    val g = Grid2DHex(
         height,
         width,
-        neighborhoodFunction = DistanceFunction.euclideanNorm2DTorus(
-            intArrayOf(height, width),
-            booleanArrayOf(false, true)
-        ),
-        rand = rand
+        DistanceFunction.squaredDistance(),
+        rand
     )
 
     g.initializeWeights(dim)
 
     val s = SOM(
         g,
-        DistanceScalingFunction.exponentialDecreasing(),
+        NeighborhoodFunction.exponentialDecreasing(),
         alpha = TimeFunction.linearDecreasingFactorScaled(initAlpha),
         sigma = TimeFunction.linearDecreasingFactorScaled(initSigma),
         rand = rand
