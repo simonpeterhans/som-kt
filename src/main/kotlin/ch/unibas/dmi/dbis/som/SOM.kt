@@ -22,7 +22,7 @@ private val logger = KotlinLogging.logger {}
  * @property neighborhoodFunction A function to scale the delta of sample and node weights.
  * @property alpha A time function (depending on iteration number) for the learn rate.
  * @property sigma A time function (depending on the iteration number) to scale neighborhood distance factor.
- * @property rand The random seed to use (randomized by default).
+ * @property rand The random seed to use for shuffling (randomized by default).
  */
 class SOM(
     val grid: Grid,
@@ -70,13 +70,18 @@ class SOM(
      *
      * @param data An array of the samples with their features as double array.
      * @param epochs The number of epochs to train for (total iterations = epochs * samples).
+     * @param shuffle Whether to shuffle the data before starting a training epoch.
      */
-    fun train(data: Array<DoubleArray>, epochs: Int) {
+    fun train(data: Array<DoubleArray>, epochs: Int, shuffle: Boolean = true) {
         val maxIter = epochs * data.size
         var currIter = 0
 
         for (e in 0 until epochs) {
-            val idx = data.indices.shuffled(rand)
+            val idx = if (shuffle) {
+                data.indices.shuffled(rand)
+            } else {
+                data.indices
+            }
 
             for (i in idx) {
                 step(data[i], currIter, maxIter)

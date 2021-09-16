@@ -11,6 +11,7 @@ import java.awt.image.BufferedImage
 import java.io.File
 import java.nio.file.Files
 import javax.imageio.ImageIO
+import kotlin.math.max
 import kotlin.math.sqrt
 import kotlin.random.Random
 
@@ -18,16 +19,28 @@ private val logger = KotlinLogging.logger {}
 
 fun main() {
 
-    val rand = Random(0)
+    logger.info { "Starting." }
+
+    val seed = 0
+
+    // Data.
+    val dataRand = Random(seed - 1)
+    val size = 1000
+    val originalSize = 1000
+    val dim = 3
+
+    val data: Array<DoubleArray> = Array(size) { DoubleArray(dim) { dataRand.nextDouble() } }
+
+    // SOM.
+    val rand = Random(seed)
     val width = 5
     val height = 5
-    val dim = 3
-    val epochs = 1
-    val size = 10000
-    val initAlpha = 0.9
-    val initSigma = 0.5 * sqrt((width * width + height * height).toDouble())
 
-    val data: Array<DoubleArray> = Array(size) { DoubleArray(dim) { rand.nextDouble() } }
+    val epochs = 1
+    val initAlpha = 0.9
+    val initSigma = 0.25 * sqrt((width * width + height * height).toDouble())
+    val alpha = TimeFunction { t, T -> initAlpha * (1.0 - t.toDouble() / originalSize) }
+    val sigma = TimeFunction { t, T -> max(initSigma * ((originalSize - t).toDouble() / originalSize), 0.5) }
 
     val g = Grid2DHex(
         height,
@@ -38,11 +51,12 @@ fun main() {
 
     g.initializeWeights(dim)
 
+
     val s = SOM(
         g,
         NeighborhoodFunction.exponentialDecreasing(),
-        alpha = TimeFunction.linearDecreasingFactorScaled(initAlpha),
-        sigma = TimeFunction.linearDecreasingFactorScaled(initSigma),
+        alpha = alpha,
+        sigma = sigma,
         rand = rand
     )
 
@@ -50,21 +64,11 @@ fun main() {
 
     val start = System.currentTimeMillis()
 
-    s.train(data, epochs)
+    s.train(data, epochs, shuffle = false)
 
     logger.info { "Train time: ${System.currentTimeMillis() - start} ms." }
 
-    logger.info { "Predicting..." }
-
-    val res = s.predict(
-        arrayOf(
-            doubleArrayOf(1.0, 0.0, 0.0),
-            doubleArrayOf(0.0, 1.0, 0.0),
-            doubleArrayOf(0.0, 0.0, 1.0)
-        )
-    )
-
-    logger.info { "Writing image..." }
+    logger.info { "Writing image and csv..." }
 
     val im = BufferedImage(width, height, BufferedImage.TYPE_INT_RGB)
     val nodes = g.nodeGrid
@@ -82,12 +86,20 @@ fun main() {
     }
 
     val path = File("data/")
-    val fileName = "img.png"
+    val fileName = "out.png"
 
     Files.createDirectories(path.toPath())
 
     val out = File(path.resolve(fileName).toURI())
     ImageIO.write(im, "png", out)
+
+    File("data/out.csv").printWriter().use { o ->
+        o.println("i,r,g,b")
+        for (i in g.nodes.indices) {
+            val w = g.nodes[i].weights
+            o.println("$i,${w.joinToString(separator = ",")}")
+        }
+    }
 
     logger.info { "Done." }
 

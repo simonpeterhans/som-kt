@@ -5,9 +5,6 @@ import kotlin.math.exp
 /**
  * Neighborhood function to scale the distances from a node to the best matching unit (node),
  * can use the alpha (learn rate) and sigma parameters.
- *
- * While the learn rate is rarely used to for scaling as time is often already integrated in sigma,
- * it is available to enable all possibilities for the distance scaling function.
  */
 fun interface NeighborhoodFunction {
 
@@ -27,10 +24,11 @@ fun interface NeighborhoodFunction {
     companion object {
 
         /**
-         * Instantiates an exponentially decreasing scaling function based on sigma and alpha.
+         * Instantiates an exponentially decreasing neighborhood function based on sigma and alpha.
+         * The form of this neighborhood function is nh(d, s, a) = a * exp((factor * d) / sigma^2).
          *
          * @param factor The scaling factor to use (defaults to -0.5).
-         * @return An exponentially decreasing scaling function.
+         * @return An exponentially decreasing neighborhood function.
          */
         fun exponentialDecreasing(factor: Double = -0.5): NeighborhoodFunction {
             return NeighborhoodFunction { d, sigma, alpha -> alpha * exp(factor * d / (sigma * sigma)) }
