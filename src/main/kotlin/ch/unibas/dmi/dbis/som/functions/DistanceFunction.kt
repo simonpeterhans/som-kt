@@ -93,7 +93,7 @@ fun interface DistanceFunction {
          * @param doWrapDim An array of Booleans, wrapping around for the dimensions for the true entries.
          * @return A DistanceFunction object for the Euclidean norm.
          */
-        fun euclideanNorm2DTorus(dims: IntArray, doWrapDim: BooleanArray): DistanceFunction {
+        fun euclideanNormToroidal(dims: IntArray, doWrapDim: BooleanArray): DistanceFunction {
             return DistanceFunction { first, second ->
                 var sum = 0.0
 
@@ -118,8 +118,8 @@ fun interface DistanceFunction {
          * @param dims The dimension of the grid.
          * @return A DistanceFunction object for the Euclidean norm.
          */
-        fun euclideanNorm2DTorus(dims: IntArray): DistanceFunction {
-            return euclideanNorm2DTorus(dims, booleanArrayOf(true, true))
+        fun euclideanNorm2DToroidal(dims: IntArray): DistanceFunction {
+            return euclideanNormToroidal(dims, booleanArrayOf(true, true))
         }
 
     }
