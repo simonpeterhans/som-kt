@@ -1,16 +1,13 @@
 plugins {
     id 'org.jetbrains.kotlin.jvm' version "$kotlinVersion"
-    id 'application'
-    id 'java'
+    id 'java-library'
+    id 'maven-publish'
     id 'idea'
 }
 
 // Project settings.
 group 'ch.unibas.dmi.dbis'
 version = '0.0.0-SNAPSHOT'
-
-// Main class.
-mainClassName = 'ch.unibas.dmi.dbis.MainKt'
 
 java {
     sourceCompatibility = javaCompatibility
@@ -29,31 +26,18 @@ compileTestKotlin {
     kotlinOptions.jvmTarget = javaCompatibility
 }
 
-jar {
-    //noinspection GroovyAssignabilityCheck
-    manifest {
-        attributes 'Version': archiveVersion.get()
-        attributes 'Main-Class': mainClassName // Same as for the application plugin.
-        attributes 'Manifest-Version': '1.0'
-        attributes 'Multi-Release': true
-    }
-
-    // Gradle 7.0 requires a duplicate handling strategy or fails if duplicates occur.
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-
-    from {
-        configurations.compileClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-}
-
 idea {
     module {
         // IntelliJ should download Javadoc.
         downloadJavadoc = true
+    }
+}
 
-        // Exclude directories from IntelliJ (indexing etc.).
-        excludeDirs += file("data")
+publishing {
+    publications {
+        maven(MavenPublication) {
+            from components.java
+        }
     }
 }
 
@@ -63,8 +47,6 @@ repositories {
 
 dependencies {
     /** LOGGING. */
-    // https://mvnrepository.com/artifact/org.apache.logging.log4j/log4j-slf4j-impl
-    implementation group: 'org.apache.logging.log4j', name: 'log4j-slf4j-impl', version: "$log4jslf4jVersion"
     // https://mvnrepository.com/artifact/io.github.microutils/kotlin-logging-jvm
     implementation group: 'io.github.microutils', name: 'kotlin-logging-jvm', version: "$kotlinLoggingVersion"
 
