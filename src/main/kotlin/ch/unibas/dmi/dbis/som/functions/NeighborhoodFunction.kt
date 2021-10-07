@@ -1,6 +1,7 @@
 package ch.unibas.dmi.dbis.som.functions
 
 import kotlin.math.exp
+import kotlin.math.max
 
 /**
  * Neighborhood function to scale the distances from a node to the best matching unit (node),
@@ -31,7 +32,9 @@ fun interface NeighborhoodFunction {
          * @return An exponentially decreasing neighborhood function.
          */
         fun exponentialDecreasing(factor: Double = -0.5): NeighborhoodFunction {
-            return NeighborhoodFunction { d, sigma, alpha -> alpha * exp(factor * d / (sigma * sigma)) }
+            return NeighborhoodFunction { d, sigma, alpha ->
+                max(alpha * exp(factor * d / (sigma * sigma)), 0.0)
+            }
         }
 
     }
