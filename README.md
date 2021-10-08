@@ -12,8 +12,8 @@ maps [[1]](https://ieeexplore.ieee.org/abstract/document/58325) and experiment w
 
 ### Usage
 
-Please understand that for now, the library is only available through your local maven repository. If you want to make
-use or test `som-kt`, clone this repository and build the artifact:
+Please understand that for now, the library is only available through your local maven repository. If you want to use or
+test `som-kt`, clone this repository and build the artifact:
 
 ```
 ./gradlew publishToMavenLocal
